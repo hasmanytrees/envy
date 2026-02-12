@@ -12,8 +12,8 @@ var exportCmd = &cobra.Command{
 	Short: "Export environment variables",
 	Long:  `Export environment variables.`,
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		exportRun(cmd.OutOrStdout())
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return exportRun(cmd.OutOrStdout())
 	},
 }
 
@@ -21,8 +21,13 @@ func init() {
 	rootCmd.AddCommand(exportCmd)
 }
 
-func exportRun(writer io.Writer) {
+func exportRun(writer io.Writer) error {
 	for _, line := range os.Environ() {
-		io.WriteString(writer, line)
+		_, err := io.WriteString(writer, line)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
