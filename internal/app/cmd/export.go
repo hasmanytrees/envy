@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,7 +13,7 @@ var exportCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, line := range os.Environ() {
-			fmt.Println(line)
+			cmd.Println(line)
 		}
 	},
 }

@@ -4,7 +4,6 @@ import (
 	"envy/internal/app/shell"
 	"errors"
 	"fmt"
-	"os"
 	"slices"
 	"strings"
 
@@ -28,7 +27,7 @@ var initCmd = &cobra.Command{
 
 		shell := shell.NewShell(shellType, sessionKey)
 
-		return shell.Init(os.Stdout)
+		return shell.Init(cmd.OutOrStdout())
 	},
 }
 
