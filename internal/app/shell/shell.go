@@ -29,10 +29,7 @@ func NewShell(shellType string, sessionKey string) Shell {
 func findLoadPaths(filename string) ([]string, error) {
 	var paths []string
 
-	currentDir, err := filepath.Abs(".")
-	if err != nil {
-		return nil, err
-	}
+	currentDir, _ := filepath.Abs(".")
 
 	for {
 		path := filepath.Join(currentDir, filename)

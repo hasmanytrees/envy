@@ -21,57 +21,68 @@ var genCmd = &cobra.Command{
 	Long:  `Generate load and unload sh scripts for managing envy-specific environment variables.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		if len(shellType) == 0 || len(sessionKey) == 0 {
-			cmd.SilenceUsage = true
-			return fmt.Errorf("could not load sh for session; run 'envy init SHELL' first")
-		}
+		err := genPreRun()
 
-		sh = shell.NewShell(shellType, sessionKey)
+		cmd.SilenceErrors = err != nil
 
-		return nil
+		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// capture current env
-		oldEnv := shell.NewEnv(os.Environ())
-
-		// find load paths (sh specific)
-		loadPaths, err := sh.FindLoadPaths()
-		if err != nil {
-			return err
-		}
-
-		// gen load script (sh specific)
-		loadLines, loadFilepath := sh.GenLoadFile(loadPaths)
-		err = writeLines(loadLines, loadFilepath)
-		if err != nil {
-			return err
-		}
-
-		// launch subshell to execute load paths and export env (sh specific)
-		subshell := sh.GetSubshellCmd()
-		output, err := subshell.CombinedOutput()
-		if err != nil {
-			return err
-		}
-
-		newEnv := shell.NewEnv(strings.Split(string(output), "\n"))
-
-		// compare envs
-		changes := oldEnv.Diff(newEnv)
-
-		// gen unload script (sh specific)
-		undoLines, undoFilepath := sh.GenUndoFile(changes)
-		err = writeLines(undoLines, undoFilepath)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return genRun()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(genCmd)
+}
+
+func genPreRun() error {
+	if len(shellType) == 0 || len(sessionKey) == 0 {
+		return fmt.Errorf("could not load sh for session; run 'envy init SHELL' first")
+	}
+
+	sh = shell.NewShell(shellType, sessionKey)
+
+	return nil
+}
+
+func genRun() error {
+	// capture current env
+	oldEnv := shell.NewEnv(os.Environ())
+
+	// find load paths (sh specific)
+	loadPaths, err := sh.FindLoadPaths()
+	if err != nil {
+		return err
+	}
+
+	// gen load script (sh specific)
+	loadLines, loadFilepath := sh.GenLoadFile(loadPaths)
+	err = writeLines(loadLines, loadFilepath)
+	if err != nil {
+		return err
+	}
+
+	// launch subshell to execute load paths and export env (sh specific)
+	subshell := sh.GetSubshellCmd()
+	output, err := subshell.CombinedOutput()
+	if err != nil {
+		return err
+	}
+
+	newEnv := shell.NewEnv(strings.Split(string(output), "\n"))
+
+	// compare envs
+	changes := oldEnv.Diff(newEnv)
+
+	// gen unload script (sh specific)
+	undoLines, undoFilepath := sh.GenUndoFile(changes)
+	err = writeLines(undoLines, undoFilepath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func writeLines(lines []string, name string) error {

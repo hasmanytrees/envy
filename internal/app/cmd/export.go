@@ -12,12 +12,16 @@ var exportCmd = &cobra.Command{
 	Long:  `Export environment variables.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, line := range os.Environ() {
-			cmd.Println(line)
-		}
+		exportRun(cmd.Println)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(exportCmd)
+}
+
+func exportRun(println func(i ...interface{})) {
+	for _, line := range os.Environ() {
+		println(line)
+	}
 }

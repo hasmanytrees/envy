@@ -4,6 +4,7 @@ import (
 	"envy/internal/app/shell"
 	"errors"
 	"fmt"
+	"io"
 	"slices"
 	"strings"
 
@@ -17,20 +18,22 @@ var initCmd = &cobra.Command{
 	Long:  `Outputs sh commands to initialize an envy session and register sh hooks.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		shellType := args[0]
-
-		if !slices.Contains(shell.ValidShellTypes, shellType) {
-			return errors.New(fmt.Sprintf("%s is not a supported shell type; valid values are [%s]", shellType, strings.Join(shell.ValidShellTypes, ", ")))
-		}
-
-		sessionKey := ulid.Make().String()
-
-		shell := shell.NewShell(shellType, sessionKey)
-
-		return shell.Init(cmd.OutOrStdout())
+		return initRun(args[0], cmd.OutOrStdout())
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+}
+
+func initRun(shellType string, writer io.Writer) error {
+	if !slices.Contains(shell.ValidShellTypes, shellType) {
+		return errors.New(fmt.Sprintf("%s is not a supported shell type; valid values are [%s]", shellType, strings.Join(shell.ValidShellTypes, ", ")))
+	}
+
+	sessionKey := ulid.Make().String()
+
+	sh := shell.NewShell(shellType, sessionKey)
+
+	return sh.Init(writer)
 }
