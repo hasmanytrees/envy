@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -12,7 +13,7 @@ var exportCmd = &cobra.Command{
 	Long:  `Export environment variables.`,
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		exportRun(cmd.Println)
+		exportRun(cmd.OutOrStdout())
 	},
 }
 
@@ -20,8 +21,8 @@ func init() {
 	rootCmd.AddCommand(exportCmd)
 }
 
-func exportRun(println func(i ...interface{})) {
+func exportRun(writer io.Writer) {
 	for _, line := range os.Environ() {
-		println(line)
+		io.WriteString(writer, line)
 	}
 }
