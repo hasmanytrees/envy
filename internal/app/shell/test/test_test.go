@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewTest(t *testing.T) {
-	test := NewTest()
+	test := NewTest("test-session")
 
 	if test == nil {
 		t.Fatal("NewTest() returned nil")
@@ -15,7 +15,7 @@ func TestNewTest(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	test := NewTest()
+	test := NewTest("test-session")
 
 	var buf bytes.Buffer
 	err := test.Init(&buf)
@@ -26,7 +26,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestFindLoadPaths(t *testing.T) {
-	test := NewTest()
+	test := NewTest("test-session")
 	paths := test.FindLoadPaths()
 
 	if len(paths) != 0 {
@@ -35,7 +35,7 @@ func TestFindLoadPaths(t *testing.T) {
 }
 
 func TestGetSubshellCmd(t *testing.T) {
-	test := NewTest()
+	test := NewTest("test-session")
 	cmd := test.GetSubshellCmd()
 
 	if cmd == nil {
@@ -48,7 +48,7 @@ func TestGetSubshellCmd(t *testing.T) {
 }
 
 func TestGenLoadFile(t *testing.T) {
-	test := NewTest()
+	test := NewTest("test-session")
 
 	inputPaths := []string{"/path1", "/path2"}
 	paths, filename := test.GenLoadFile(inputPaths)
@@ -69,7 +69,7 @@ func TestGenLoadFile(t *testing.T) {
 }
 
 func TestGenUndoFile(t *testing.T) {
-	test := NewTest()
+	test := NewTest("test-session")
 
 	changes := []shared.EnvChange{{Key: "FOO", OldValue: "old", NewValue: "new"}}
 	paths, filename := test.GenUndoFile(changes)

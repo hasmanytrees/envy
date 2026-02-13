@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"envy/internal/app/shell/test"
 	"envy/internal/app/shell/zsh"
 	"testing"
 )
@@ -13,8 +14,8 @@ func TestNewShell(t *testing.T) {
 		wantNil    bool
 	}{
 		{
-			name:       "supported shell",
-			shellType:  SupportedShellTypes[0],
+			name:       "zsh shell",
+			shellType:  "zsh",
 			sessionKey: "test-session",
 			wantNil:    false,
 		},
@@ -30,6 +31,12 @@ func TestNewShell(t *testing.T) {
 			sessionKey: "test-session",
 			wantNil:    true,
 		},
+		{
+			name:       "test shell",
+			shellType:  "test",
+			sessionKey: "test-session",
+			wantNil:    false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -41,14 +48,26 @@ func TestNewShell(t *testing.T) {
 			}
 
 			if !tt.wantNil {
-				z, ok := got.(*zsh.Zsh)
-				if !ok {
-					t.Errorf("NewShell() did not return a *Zsh for zsh shell type")
+				if tt.shellType == "zsh" {
+					z, ok := got.(*zsh.Zsh)
+					if !ok {
+						t.Errorf("NewShell() did not return a *Zsh for zsh shell type")
+					}
+
+					if z.SessionKey != tt.sessionKey {
+						t.Errorf("NewShell() SessionKey = %v, want %v", z.SessionKey, tt.sessionKey)
+					}
+				} else if tt.shellType == "test" {
+					z, ok := got.(*test.Test)
+					if !ok {
+						t.Errorf("NewShell() did not return a *Test for shell type")
+					}
+
+					if z.SessionKey != tt.sessionKey {
+						t.Errorf("NewShell() SessionKey = %v, want %v", z.SessionKey, tt.sessionKey)
+					}
 				}
 
-				if z.SessionKey != tt.sessionKey {
-					t.Errorf("NewShell() SessionKey = %v, want %v", z.SessionKey, tt.sessionKey)
-				}
 			}
 		})
 	}

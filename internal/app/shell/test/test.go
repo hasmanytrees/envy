@@ -6,13 +6,17 @@ import (
 	"os/exec"
 )
 
-type Test struct{}
-
-func NewTest() *Test {
-	return &Test{}
+type Test struct {
+	SessionKey string
 }
 
-func (t *Test) Init(w io.Writer) error {
+func NewTest(sessionKey string) *Test {
+	return &Test{
+		SessionKey: sessionKey,
+	}
+}
+
+func (t *Test) Init(_ io.Writer) error {
 	return nil
 }
 
@@ -28,6 +32,6 @@ func (t *Test) GenLoadFile(paths []string) ([]string, string) {
 	return paths, "test.load.sh"
 }
 
-func (t *Test) GenUndoFile(changes []shared.EnvChange) ([]string, string) {
+func (t *Test) GenUndoFile(_ []shared.EnvChange) ([]string, string) {
 	return []string{}, "test.unload.sh"
 }

@@ -21,7 +21,7 @@ type Shell interface {
 func NewShell(shellType string, sessionKey string) Shell {
 	switch shellType {
 	case "test":
-		return test.NewTest()
+		return test.NewTest(sessionKey)
 	case "zsh":
 		return zsh.NewZsh(sessionKey)
 	}
