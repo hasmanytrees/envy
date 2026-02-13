@@ -1,4 +1,4 @@
-# envy
+# envy [![codecov](https://codecov.io/github/hasmanytrees/envy/graph/badge.svg?token=QKS19V97BU)](https://codecov.io/github/hasmanytrees/envy)
 
 `envy` is a lightweight environment variable manager that automatically loads and unloads environment variables as you move between directories. It's designed to be simple, shell-native, and unobtrusive.
 
