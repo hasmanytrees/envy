@@ -23,7 +23,7 @@ func init() {
 
 func exportRun(writer io.Writer) error {
 	for _, line := range os.Environ() {
-		_, err := io.WriteString(writer, line)
+		_, err := io.WriteString(writer, line+"\n")
 		if err != nil {
 			return err
 		}

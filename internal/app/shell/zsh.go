@@ -70,11 +70,11 @@ func (z *Zsh) GenUndoFile(changes []EnvChange) ([]string, string) {
 		if len(change.OldValue) == 0 {
 			// this was an addition so we need to remove it now
 			// unset FOO
-			lines = append(lines, fmt.Sprintf("unset '%s'", change.Key))
+			lines = append(lines, fmt.Sprintf("unset %s", change.Key))
 		} else if len(change.NewValue) == 0 {
 			// this was a removal so we need to add it back now
 			// export FOO=bar
-			lines = append(lines, fmt.Sprintf("export '%s=%s'", change.Key, change.OldValue))
+			lines = append(lines, fmt.Sprintf("export %s=%s", change.Key, change.OldValue))
 		} else {
 			// this was a change so we need to change it back now as long as it hasn't been changed outside of envy (thus the check)
 			// if [[ $FOO == "baz" ]]; then
