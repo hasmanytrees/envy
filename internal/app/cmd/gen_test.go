@@ -61,6 +61,8 @@ func TestGenCmd(t *testing.T) {
 			shellType = shell.SupportedShellTypes[0]
 			sessionKey = "12345678"
 
+			os.MkdirAll("~/.cache/envy", 0755)
+
 			rootCmd.SetArgs(tt.args)
 			rootCmd.SetOut(io.Discard)
 			rootCmd.SetErr(io.Discard)
