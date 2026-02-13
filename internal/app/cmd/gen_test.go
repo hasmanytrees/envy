@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"envy/internal/app/shared"
 	"envy/internal/app/shell"
-	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -12,17 +12,17 @@ import (
 )
 
 type fakeShell struct {
-	findLoadPaths  func() ([]string, error)
+	findLoadPaths  func() []string
 	getSubshellCmd func() *exec.Cmd
 	genLoadFile    func(paths []string) ([]string, string)
-	genUndoFile    func(changes []shell.EnvChange) ([]string, string)
+	genUndoFile    func(changes []shared.EnvChange) ([]string, string)
 }
 
 func (f *fakeShell) Init(_ io.Writer) error {
 	return nil
 }
 
-func (f *fakeShell) FindLoadPaths() ([]string, error) {
+func (f *fakeShell) FindLoadPaths() []string {
 	return f.findLoadPaths()
 }
 
@@ -34,7 +34,7 @@ func (f *fakeShell) GenLoadFile(paths []string) ([]string, string) {
 	return f.genLoadFile(paths)
 }
 
-func (f *fakeShell) GenUndoFile(changes []shell.EnvChange) ([]string, string) {
+func (f *fakeShell) GenUndoFile(changes []shared.EnvChange) ([]string, string) {
 	return f.genUndoFile(changes)
 }
 
@@ -136,12 +136,12 @@ func TestGenRun(t *testing.T) {
 		{
 			name: "success",
 			fake: &fakeShell{
-				findLoadPaths:  func() ([]string, error) { return []string{}, nil },
+				findLoadPaths:  func() []string { return []string{} },
 				getSubshellCmd: func() *exec.Cmd { return exec.Command("sh", "-c", "exit 0") }, // echo full env so diff is empty
 				genLoadFile: func(paths []string) ([]string, string) {
 					return []string{}, filepath.Join(tmp, "session.load.sh")
 				},
-				genUndoFile: func(_ []shell.EnvChange) ([]string, string) {
+				genUndoFile: func(_ []shared.EnvChange) ([]string, string) {
 					return []string{}, filepath.Join(tmp, "session.undo.sh")
 				},
 			},
@@ -157,28 +157,14 @@ func TestGenRun(t *testing.T) {
 			},
 		},
 		{
-			name: "error sh.FindLoadPaths",
-			fake: &fakeShell{
-				findLoadPaths:  func() ([]string, error) { return []string{}, errors.New("error") },
-				getSubshellCmd: func() *exec.Cmd { return exec.Command("sh", "-c", "exit 0") }, // echo full env so diff is empty
-				genLoadFile: func(paths []string) ([]string, string) {
-					return []string{}, filepath.Join(tmp, "session.load.sh")
-				},
-				genUndoFile: func(_ []shell.EnvChange) ([]string, string) {
-					return []string{}, filepath.Join(tmp, "session.undo.sh")
-				},
-			},
-			wantErr: true,
-		},
-		{
 			name: "error in writeLines due to sh.GenLoadFile",
 			fake: &fakeShell{
-				findLoadPaths:  func() ([]string, error) { return []string{}, nil },
+				findLoadPaths:  func() []string { return []string{} },
 				getSubshellCmd: func() *exec.Cmd { return exec.Command("sh", "-c", "exit 0") }, // echo full env so diff is empty
 				genLoadFile: func(paths []string) ([]string, string) {
 					return []string{}, ""
 				},
-				genUndoFile: func(_ []shell.EnvChange) ([]string, string) {
+				genUndoFile: func(_ []shared.EnvChange) ([]string, string) {
 					return []string{}, filepath.Join(tmp, "session.undo.sh")
 				},
 			},
@@ -187,12 +173,12 @@ func TestGenRun(t *testing.T) {
 		{
 			name: "error subshell.CombinedOutput",
 			fake: &fakeShell{
-				findLoadPaths:  func() ([]string, error) { return []string{}, nil },
+				findLoadPaths:  func() []string { return []string{} },
 				getSubshellCmd: func() *exec.Cmd { return exec.Command("sh", "-c", "exit 1") }, // echo full env so diff is empty
 				genLoadFile: func(paths []string) ([]string, string) {
 					return []string{}, filepath.Join(tmp, "session.load.sh")
 				},
-				genUndoFile: func(_ []shell.EnvChange) ([]string, string) {
+				genUndoFile: func(_ []shared.EnvChange) ([]string, string) {
 					return []string{}, filepath.Join(tmp, "session.undo.sh")
 				},
 			},
@@ -201,12 +187,12 @@ func TestGenRun(t *testing.T) {
 		{
 			name: "error in writeLines due to sh.GenUndoFile",
 			fake: &fakeShell{
-				findLoadPaths:  func() ([]string, error) { return []string{}, nil },
+				findLoadPaths:  func() []string { return []string{} },
 				getSubshellCmd: func() *exec.Cmd { return exec.Command("sh", "-c", "exit 0") }, // echo full env so diff is empty
 				genLoadFile: func(paths []string) ([]string, string) {
 					return []string{}, filepath.Join(tmp, "session.load.sh")
 				},
-				genUndoFile: func(_ []shell.EnvChange) ([]string, string) {
+				genUndoFile: func(_ []shared.EnvChange) ([]string, string) {
 					return []string{}, ""
 				},
 			},

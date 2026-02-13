@@ -1,7 +1,8 @@
-package shell
+package zsh
 
 import (
 	_ "embed"
+	"envy/internal/app/shared"
 	"fmt"
 	"io"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 //go:embed zsh_init.zsh
 var initScript string
+var envyScriptFilename = "envy.sh"
 
 type Zsh struct {
 	SessionKey   string
@@ -41,8 +43,8 @@ func (z *Zsh) Init(w io.Writer) error {
 	return t.Execute(w, z)
 }
 
-func (z *Zsh) FindLoadPaths() ([]string, error) {
-	return findLoadPaths("envy.sh")
+func (z *Zsh) FindLoadPaths() []string {
+	return shared.FindLoadPaths(envyScriptFilename)
 }
 
 func (z *Zsh) GetSubshellCmd() *exec.Cmd {
@@ -61,7 +63,7 @@ func (z *Zsh) GenLoadFile(paths []string) ([]string, string) {
 	return lines, z.LoadFilepath
 }
 
-func (z *Zsh) GenUndoFile(changes []EnvChange) ([]string, string) {
+func (z *Zsh) GenUndoFile(changes []shared.EnvChange) ([]string, string) {
 	var lines []string
 
 	lines = append(lines, "#!/bin/zsh")

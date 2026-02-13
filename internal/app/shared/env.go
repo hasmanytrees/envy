@@ -1,6 +1,10 @@
-package shell
+package shared
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -58,4 +62,36 @@ func (old *Env) Diff(new *Env) []EnvChange {
 	}
 
 	return changes
+}
+
+func FindLoadPaths(filename string) []string {
+	var paths []string
+
+	// currentDir, _ := filepath.Abs(".")
+	currentDir, _ := os.Getwd()
+	fmt.Println(currentDir)
+
+	for {
+		path := filepath.Join(currentDir, filename)
+		// check if the file exists ignoring errors for files not found
+		if _, err := os.Stat(path); err == nil {
+			paths = append(paths, path)
+		}
+
+		// get the parent directory
+		parentDir := filepath.Dir(currentDir)
+
+		// check if we have reached the root directory (parent is the same as current)
+		if parentDir == currentDir {
+			break
+		}
+
+		// move up to the parent directory for the next iteration
+		currentDir = parentDir
+	}
+
+	// reverse so that processing can happen naturally (highest directory working down)
+	slices.Reverse(paths)
+
+	return paths
 }

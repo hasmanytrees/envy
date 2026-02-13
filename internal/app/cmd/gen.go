@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"envy/internal/app/shared"
 	"envy/internal/app/shell"
 	"fmt"
 	"os"
@@ -48,17 +49,14 @@ func genPreRun() error {
 
 func genRun() error {
 	// capture current env
-	oldEnv := shell.NewEnv(os.Environ())
+	oldEnv := shared.NewEnv(os.Environ())
 
 	// find load paths (sh specific)
-	loadPaths, err := sh.FindLoadPaths()
-	if err != nil {
-		return err
-	}
+	loadPaths := sh.FindLoadPaths()
 
 	// gen load script (sh specific)
 	loadLines, loadFilepath := sh.GenLoadFile(loadPaths)
-	err = writeLines(loadLines, loadFilepath)
+	err := writeLines(loadLines, loadFilepath)
 	if err != nil {
 		return err
 	}
@@ -70,7 +68,7 @@ func genRun() error {
 		return err
 	}
 
-	newEnv := shell.NewEnv(strings.Split(string(output), "\n"))
+	newEnv := shared.NewEnv(strings.Split(string(output), "\n"))
 
 	// compare envs
 	changes := oldEnv.Diff(newEnv)
