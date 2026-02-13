@@ -58,8 +58,8 @@ func TestGenCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Setenv("ENVY_SHELL", shell.SupportedShellTypes[0])
-			t.Setenv("ENVY_SESSION_KEY", "12345678")
+			shellType = shell.SupportedShellTypes[0]
+			sessionKey = "12345678"
 
 			rootCmd.SetArgs(tt.args)
 			rootCmd.SetOut(io.Discard)

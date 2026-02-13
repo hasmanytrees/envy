@@ -22,6 +22,11 @@ func TestMainFunc(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			os.Args = tt.args
 
+			sout := os.Stdout
+			null, _ := os.Open(os.DevNull)
+			os.Stdout = null
+			defer func() { os.Stdout = sout }()
+
 			// can't easily test main functions that exit through an call to os.Exit
 			// therefore this test only executes main without any assertions
 
