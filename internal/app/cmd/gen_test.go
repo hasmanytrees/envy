@@ -58,6 +58,9 @@ func TestGenCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("ENVY_SHELL", shell.SupportedShellTypes[0])
+			t.Setenv("ENVY_SESSION_KEY", "12345678")
+
 			rootCmd.SetArgs(tt.args)
 			rootCmd.SetOut(io.Discard)
 			rootCmd.SetErr(io.Discard)
@@ -65,7 +68,7 @@ func TestGenCmd(t *testing.T) {
 			err := genCmd.Execute()
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("exportCmd error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("genCmd error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
