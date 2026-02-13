@@ -24,6 +24,9 @@ type Zsh struct {
 func NewZsh(sessionKey string) *Zsh {
 	homeDir, _ := os.UserHomeDir()
 
+	cacheDir := filepath.Join(homeDir, ".cache", "envy")
+	os.MkdirAll(cacheDir, 0755)
+
 	loadFilepath := filepath.Join(homeDir, ".cache/envy", fmt.Sprintf("%s.load.sh", sessionKey))
 	undoFilepath := filepath.Join(homeDir, ".cache/envy", fmt.Sprintf("%s.undo.sh", sessionKey))
 

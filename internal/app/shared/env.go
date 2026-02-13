@@ -1,7 +1,6 @@
 package shared
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -67,9 +66,7 @@ func (old *Env) Diff(new *Env) []EnvChange {
 func FindLoadPaths(filename string) []string {
 	var paths []string
 
-	// currentDir, _ := filepath.Abs(".")
 	currentDir, _ := os.Getwd()
-	fmt.Println(currentDir)
 
 	for {
 		path := filepath.Join(currentDir, filename)
