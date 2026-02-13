@@ -2,6 +2,7 @@ package shell
 
 import (
 	"envy/internal/app/shared"
+	"envy/internal/app/shell/test"
 	"envy/internal/app/shell/zsh"
 	"io"
 	"os/exec"
@@ -19,6 +20,8 @@ type Shell interface {
 
 func NewShell(shellType string, sessionKey string) Shell {
 	switch shellType {
+	case "test":
+		return test.NewTest()
 	case "zsh":
 		return zsh.NewZsh(sessionKey)
 	}

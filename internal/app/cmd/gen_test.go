@@ -58,7 +58,8 @@ func TestGenCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			shellType = shell.SupportedShellTypes[0]
+			// using the test shell
+			shellType = "test"
 			sessionKey = "12345678"
 
 			rootCmd.SetArgs(tt.args)
