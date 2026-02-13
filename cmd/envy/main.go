@@ -2,12 +2,15 @@ package main
 
 import (
 	"envy/internal/app/cmd"
+	"os"
 )
 
-// envy init <zsh>
+// envy init SHELL
 // envy export
 // envy gen
 
 func main() {
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
