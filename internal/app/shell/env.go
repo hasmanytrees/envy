@@ -4,6 +4,8 @@ import (
 	"strings"
 )
 
+var UntrackedEnvVars = []string{"_", "OLDPWD", "SHLVL", "TTY"}
+
 type EnvChange struct {
 	Key      string
 	OldValue string
@@ -28,10 +30,9 @@ func NewEnv(lines []string) *Env {
 	}
 
 	// remove known vars that are managed by the os/shell and not user apps
-	delete(vars, "_")
-	delete(vars, "OLDPWD")
-	delete(vars, "SHLVL")
-	delete(vars, "TTY")
+	for _, v := range UntrackedEnvVars {
+		delete(vars, v)
+	}
 
 	return &Env{
 		vars: vars,
