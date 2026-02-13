@@ -25,7 +25,9 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -v -coverprofile=coverage.txt ./...
+      run: |
+        mkdir -p /home/runner/.cache/envy
+        go test -v -coverprofile=coverage.txt ./...
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
