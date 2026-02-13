@@ -27,8 +27,8 @@ func init() {
 }
 
 func initRun(shellType string, writer io.Writer) error {
-	if !slices.Contains(shell.ValidShellTypes, shellType) {
-		return errors.New(fmt.Sprintf("%s is not a supported shell type; valid values are [%s]", shellType, strings.Join(shell.ValidShellTypes, ", ")))
+	if !slices.Contains(shell.SupportedShellTypes, shellType) {
+		return errors.New(fmt.Sprintf("%s is not a supported shell type; valid values are [%s]", shellType, strings.Join(shell.SupportedShellTypes, ", ")))
 	}
 
 	sessionKey := ulid.Make().String()

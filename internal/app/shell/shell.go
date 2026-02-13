@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -8,7 +9,7 @@ import (
 	"slices"
 )
 
-var ValidShellTypes = []string{"zsh"}
+var SupportedShellTypes = []string{"zsh"}
 
 type Shell interface {
 	Init(w io.Writer) error
@@ -29,7 +30,9 @@ func NewShell(shellType string, sessionKey string) Shell {
 func findLoadPaths(filename string) ([]string, error) {
 	var paths []string
 
-	currentDir, _ := filepath.Abs(".")
+	// currentDir, _ := filepath.Abs(".")
+	currentDir, _ := os.Getwd()
+	fmt.Println(currentDir)
 
 	for {
 		path := filepath.Join(currentDir, filename)

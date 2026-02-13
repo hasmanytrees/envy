@@ -20,7 +20,7 @@ func TestInitCmd(t *testing.T) {
 		},
 		{
 			name:    "with 1 valid args",
-			args:    []string{"init", shell.ValidShellTypes[0]},
+			args:    []string{"init", shell.SupportedShellTypes[0]},
 			wantErr: false,
 		},
 		{
@@ -53,7 +53,7 @@ func TestInitRun(t *testing.T) {
 	}{
 		{
 			name:      "with 1 valid args",
-			shellType: shell.ValidShellTypes[0],
+			shellType: shell.SupportedShellTypes[0],
 			wantErr:   false,
 		},
 		{

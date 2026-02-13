@@ -86,7 +86,7 @@ func TestGenPreRun(t *testing.T) {
 		},
 		{
 			name:       "no session key",
-			shellType:  shell.ValidShellTypes[0],
+			shellType:  shell.SupportedShellTypes[0],
 			sessionKey: "",
 			wantErr:    true,
 		},
@@ -98,7 +98,7 @@ func TestGenPreRun(t *testing.T) {
 		},
 		{
 			name:       "with shell type AND session key",
-			shellType:  shell.ValidShellTypes[0],
+			shellType:  shell.SupportedShellTypes[0],
 			sessionKey: "12345678",
 			wantErr:    false,
 		},
