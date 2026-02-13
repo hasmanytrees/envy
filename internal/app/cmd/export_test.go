@@ -41,7 +41,7 @@ func TestExportCmd(t *testing.T) {
 			err := exportCmd.Execute()
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("exportCmd.Execute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("exportCmd error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
