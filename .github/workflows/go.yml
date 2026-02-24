@@ -26,7 +26,6 @@ jobs:
 
     - name: Test
       run: |
-        mkdir -p /home/runner/.cache/envy
         go test -v -coverprofile=coverage.txt ./...
 
     - name: Upload coverage reports to Codecov
