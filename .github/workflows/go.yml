@@ -41,4 +41,4 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         format: golang
-        files: ./coverage.txt
+        file: coverage.txt
