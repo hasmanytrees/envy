@@ -40,4 +40,5 @@ jobs:
     - name: Coveralls
       uses: coverallsapp/github-action@v2
       with:
+        format: golang
         files: ./coverage.txt
