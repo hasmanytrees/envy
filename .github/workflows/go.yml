@@ -37,8 +37,3 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.txt
 
-    - name: Coveralls
-      uses: coverallsapp/github-action@v2
-      with:
-        format: golang
-        file: coverage.txt
