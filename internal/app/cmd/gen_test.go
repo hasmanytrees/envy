@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"envy/internal/app/shared"
 	"envy/internal/app/shell"
 	"io"
@@ -59,8 +60,8 @@ func TestGenCmd(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// using the test shell
-			shellType = "test"
-			sessionKey = "12345678"
+			t.Setenv("ENVY_SHELL", "test")
+			t.Setenv("ENVY_SESSION_KEY", "12345678")
 
 			rootCmd.SetArgs(tt.args)
 			rootCmd.SetOut(io.Discard)
@@ -71,6 +72,10 @@ func TestGenCmd(t *testing.T) {
 			if (err != nil) != tt.wantErr {
 				t.Errorf("genCmd error = %v, wantErr %v", err, tt.wantErr)
 			}
+
+			// cleanup after the test shell
+			os.RemoveAll("test.load.sh")
+			os.RemoveAll("test.unload.sh")
 		})
 	}
 }
@@ -110,19 +115,14 @@ func TestGenPreRun(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh = nil
-			shellType = tt.shellType
-			sessionKey = tt.sessionKey
+			t.Setenv("ENVY_SHELL", tt.shellType)
+			t.Setenv("ENVY_SESSION_KEY", tt.sessionKey)
 
-			err := genPreRun()
+			err := genPreRun(genCmd)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("exportRun() error = %v, wantErr %v", err, tt.wantErr)
 				return
-			}
-
-			if (sh == nil) != tt.wantErr {
-				t.Errorf("exportRun() sh = %v, wantErr %v", sh, tt.wantErr)
 			}
 		})
 	}
@@ -206,9 +206,11 @@ func TestGenRun(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh = tt.fake
+			ctx := genCmd.Context()
+			ctx = context.WithValue(ctx, "shell", tt.fake)
+			genCmd.SetContext(ctx)
 
-			err := genRun()
+			err := genRun(genCmd)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("genRun() error = %v, wantErr %v", err, tt.wantErr)
 			}

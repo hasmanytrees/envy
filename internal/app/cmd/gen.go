@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"envy/internal/app/shared"
 	"envy/internal/app/shell"
 	"fmt"
@@ -10,26 +11,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	shellType  = os.Getenv("ENVY_SHELL")
-	sessionKey = os.Getenv("ENVY_SESSION_KEY")
-	sh         shell.Shell
-)
-
 var genCmd = &cobra.Command{
 	Use:   "gen",
 	Short: "Generate load and unload sh scripts",
 	Long:  `Generate load and unload sh scripts for managing envy-specific environment variables.`,
 	Args:  cobra.NoArgs,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		err := genPreRun()
-
-		cmd.SilenceErrors = err != nil
-
-		return err
+		return genPreRun(cmd)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return genRun()
+		return genRun(cmd)
 	},
 }
 
@@ -37,17 +28,29 @@ func init() {
 	rootCmd.AddCommand(genCmd)
 }
 
-func genPreRun() error {
+func genPreRun(cmd *cobra.Command) error {
+	shellType := os.Getenv("ENVY_SHELL")
+	sessionKey := os.Getenv("ENVY_SESSION_KEY")
+
 	if len(shellType) == 0 || len(sessionKey) == 0 {
+		cmd.SilenceErrors = true
 		return fmt.Errorf("could not load sh for session; run 'envy init SHELL' first")
 	}
 
-	sh = shell.NewShell(shellType, sessionKey)
+	sh := shell.NewShell(shellType, sessionKey)
+
+	// add the shell to the command context so we can use it during Run
+	ctx := cmd.Context()
+	ctx = context.WithValue(ctx, "shell", sh)
+	cmd.SetContext(ctx)
 
 	return nil
 }
 
-func genRun() error {
+func genRun(cmd *cobra.Command) error {
+	// retrieve the shell from the command context
+	sh := cmd.Context().Value("shell").(shell.Shell)
+
 	// capture current env
 	oldEnv := shared.NewEnv(os.Environ())
 
