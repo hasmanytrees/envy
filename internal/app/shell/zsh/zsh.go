@@ -27,8 +27,8 @@ func NewZsh(sessionKey string) *Zsh {
 	cacheDir := filepath.Join(homeDir, ".cache", "envy")
 	os.MkdirAll(cacheDir, 0755)
 
-	loadFilepath := filepath.Join(homeDir, ".cache/envy", fmt.Sprintf("%s.load.sh", sessionKey))
-	undoFilepath := filepath.Join(homeDir, ".cache/envy", fmt.Sprintf("%s.undo.sh", sessionKey))
+	loadFilepath := filepath.Join(cacheDir, fmt.Sprintf("%s.load.sh", sessionKey))
+	undoFilepath := filepath.Join(cacheDir, fmt.Sprintf("%s.undo.sh", sessionKey))
 
 	return &Zsh{
 		SessionKey:   sessionKey,
